@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const Debit = () => {
+const Credit = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const username = searchParams.get("username");
@@ -26,8 +28,37 @@ const Debit = () => {
     fetchData();
   }, []);
 
+  const popupStyle = {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundSize: "cover",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  };
+
+  const contentStyle = {
+    backgroundColor: "transparent",
+    border: "none",
+    borderRadius: "8px",
+  };
+
+  const closeButtonStyle = {
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+  };
+
   const handleCreditClick = () => {
     setShowForm(true);
+  };
+
+  const togglePopup = () => {
+    setShowForm(false);
   };
 
   const handleFormSubmit = async (e) => {
@@ -44,6 +75,7 @@ const Debit = () => {
         name: formName,
         amount: formBalance,
       });
+
       setUserData((prevUserData) =>
         prevUserData.map((user) =>
           user.name === formName ? { ...user, amount: res.data.amount } : user
@@ -54,13 +86,15 @@ const Debit = () => {
       setShowForm(false);
     } catch (err) {
       console.log("Error submitting form:", err);
+      toast.error(err);
     }
   };
 
   return (
     <div className="container">
       <div className="welcome">
-        {username ? <p>Welcome, {username}!</p> : <p>Welcome!</p>}
+        <ToastContainer />
+        {username ? <h2>Welcome, {username}!</h2> : <h2>Welcome!</h2>}
       </div>
       <div className="cont-1">
         <table className="balance-table">
@@ -88,40 +122,47 @@ const Debit = () => {
         </button>
 
         {showForm && (
-          <form className="credit-form" onSubmit={handleFormSubmit}>
-            <div>
-              <label>Name:</label>
-              <select
-                value={formName}
-                onChange={(e) => setFormName(e.target.value)}
-                required
-              >
-                <option value="" disabled>
-                  Select user
-                </option>
-                {userData &&
-                  userData.map((user, index) => (
-                    <option key={index} value={user.name}>
-                      {user.name}
+          <div style={popupStyle}>
+            <div style={contentStyle}>
+              <button onClick={togglePopup} style={closeButtonStyle}>
+                <i class="fa-solid fa-circle-xmark"></i>
+              </button>
+              <form className="credit-form" onSubmit={handleFormSubmit}>
+                <div>
+                  <label>Name</label>
+                  <select
+                    value={formName}
+                    onChange={(e) => setFormName(e.target.value)}
+                    required
+                  >
+                    <option value="" disabled>
+                      Select user
                     </option>
-                  ))}
-              </select>
+                    {userData &&
+                      userData.map((user, index) => (
+                        <option key={index} value={user.name}>
+                          {user.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+                <div>
+                  <label>Amount</label>
+                  <input
+                    type="number"
+                    value={formBalance}
+                    onChange={(e) => setFormBalance(e.target.value)}
+                    required
+                  />
+                </div>
+                <button type="submit">Update Balance</button>
+              </form>
             </div>
-            <div>
-              <label>Amount:</label>
-              <input
-                type="number"
-                value={formBalance}
-                onChange={(e) => setFormBalance(e.target.value)}
-                required
-              />
-            </div>
-            <button type="submit">Update Balance</button>
-          </form>
+          </div>
         )}
       </div>
     </div>
   );
 };
 
-export default Debit;
+export default Credit;
