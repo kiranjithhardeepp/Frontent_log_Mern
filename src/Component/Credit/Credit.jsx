@@ -16,7 +16,7 @@ const Credit = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:5000/getData");
+        const res = await axios.get("https://backend-log-mern.onrender.com/getData");
         console.log(res.data);
         setUserData(res.data);
       } catch (err) {
@@ -71,7 +71,7 @@ const Credit = () => {
     }
 
     try {
-      const res = await axios.put("http://127.0.0.1:5000/creditData", {
+      const res = await axios.put("https://backend-log-mern.onrender.com/creditData", {
         name: formName,
         amount: formBalance,
       });

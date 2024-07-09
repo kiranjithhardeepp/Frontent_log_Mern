@@ -4,7 +4,6 @@ import axios from "axios";
 import "./Login.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 const Log = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -14,10 +13,13 @@ const Log = () => {
   const handleLogin = async (e) => {
     e.preventDefault(); // Prevent default form submission
     try {
-      const res = await axios.post("http://127.0.0.1:5000/login", {
-        username,
-        password,
-      });
+      const res = await axios.post(
+        "https://backend-log-mern.onrender.com/login",
+        {
+          username,
+          password,
+        }
+      );
       console.log(res);
 
       if (res.data.message === "true") {
@@ -29,7 +31,7 @@ const Log = () => {
         toast.success("Debit only");
         setTimeout(() => {
           navigate(`/Debit?username=${username}`);
-        }, 2000); 
+        }, 2000);
       } else {
         setError("An error occurred. Please try again.");
         toast.error("Error in login");
